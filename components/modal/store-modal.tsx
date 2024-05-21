@@ -9,6 +9,8 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import axios from 'axios'
+import toast from "react-hot-toast"
 
 const formSchema = z.object({
     name: z.string().min(3, { message: 'Store name should be minimun 3 characters' })
@@ -26,7 +28,15 @@ export const StoreModal = () => {
     })
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log(values)
+        try {
+            setIsLoading(true)
+            const response = await axios.post('/api/stores', values)
+            toast.success('Store Created')
+        } catch (error) {
+            toast.error('Something went wrong')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -46,8 +56,8 @@ export const StoreModal = () => {
                             )}
                             />
                             <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-                                <Button type='button' variant='outline' size='sm'>Cancel</Button>
-                                <Button type="submit" size='sm'>Continue</Button>
+                                <Button disabled={isLoading} type='button' variant='outline' size='sm'>Cancel</Button>
+                                <Button disabled={isLoading} type="submit" size='sm'>Continue</Button>
                             </div>
                         </form>
                     </Form>

@@ -4,12 +4,11 @@ import { auth } from '@clerk/nextjs/server';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { redirect } from 'next/navigation';
 import React from 'react'
-
-interface SetupLayoutProps {
+interface DashboardLayoutProps {
     children: React.ReactNode;
+    params: { storeId: string }
 }
-
-const SetupLayout = async ({ children }: SetupLayoutProps) => {
+const DashboardLayout = async ({ children, params }: DashboardLayoutProps) => {
     const { userId } = auth();
 
     if (!userId) {
@@ -20,6 +19,7 @@ const SetupLayout = async ({ children }: SetupLayoutProps) => {
         query(
             collection(db, 'stores'),
             where('userId', '==', userId),
+            where('id', '==', params.storeId)
         )
     )
 
@@ -27,16 +27,15 @@ const SetupLayout = async ({ children }: SetupLayoutProps) => {
 
     storeSnap.forEach(doc => {
         store = doc.data() as Store
-        return
     })
 
-    if (store) {
-        redirect(`/${store?.id}`)
+    if (!store) {
+        redirect('/')
     }
 
     return (
-        <div>{children}</div>
+        <div>This is the Navbar {children}</div>
     )
 }
 
-export default SetupLayout
+export default DashboardLayout
