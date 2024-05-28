@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { AlertModal } from '@/components/modal/alert-modal'
+import ApiAlert from '@/components/api-alert'
+import { useOrigin } from '@/hooks/use-origin'
 
 interface SettingsFormProps {
   initialData: Store
@@ -36,12 +38,14 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const params = useParams();
   const router = useRouter()
+  const origin = useOrigin();
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true)
-      const response = await axios.patch(`/api/stores/${params.storeId}`, data)
+      const response = await axios.patch(`/api/${params.storeId}`, data)
       toast.success('Store Updated')
+      console.log("🚀 ~ onSubmit ~ response:", response)
       router.refresh()
     } catch (error) {
       toast.error('Something went wrong')
@@ -53,11 +57,12 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
   const onDelete = async () => {
     try {
       setIsLoading(true)
-      const response = await axios.delete(`/api/stores/${params.storeId}`)
+      const response = await axios.delete(`/api/${params.storeId}`)
       toast.success('Store Removed')
       router.refresh();
       router.push('/')
     } catch (error) {
+      console.log("🚀 ~ onDelete ~ error:", error)
       toast.error("Something went Wrong")
     } finally {
       setIsLoading(false)
@@ -95,7 +100,7 @@ const SettingsForm = ({ initialData }: SettingsFormProps) => {
         </form>
       </Form>
       <Separator />
-
+      <ApiAlert title='NEXT_PUBLIC_API_URL' description={`${origin}/api/${params.storeId}`} variant='public' />
     </>
   )
 }

@@ -9,7 +9,7 @@ const Heading = ({ title, description }: HeadingProps) => {
     return (
         <div className='w-full'>
             <div className="text-3xl font-bold tracking-tight">{title}</div>
-            <div className="text-sm text-muted-foreground">{description}</div>
+            <div className="text-sm text-muted-foreground mt-1">{description}</div>
         </div>
     )
 }
